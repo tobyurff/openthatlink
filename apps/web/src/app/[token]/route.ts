@@ -36,10 +36,10 @@ function jsonResponse(data: EnqueueResponse, status: number = 200) {
 
 async function handleEnqueue(
   request: NextRequest,
-  secret: string
+  token: string
 ): Promise<NextResponse> {
-  // Validate secret
-  if (!validateSecret(secret)) {
+  // Validate secret (token is the secret)
+  if (!validateSecret(token)) {
     return jsonResponse(
       {
         ok: false,
@@ -94,20 +94,20 @@ async function handleEnqueue(
         error:
           'Missing link(s). Provide ?link=example.com or POST {"links":[...]}',
         examples: [
-          `${config.PUBLIC_BASE_URL}/api/<SECRET>?link=example.com`,
-          `curl -X POST ${config.PUBLIC_BASE_URL}/api/<SECRET> -H 'content-type: application/json' -d '{"links":["example.com"]}'`,
+          `${config.PUBLIC_BASE_URL}/<SECRET>?link=example.com`,
+          `curl -X POST ${config.PUBLIC_BASE_URL}/<SECRET> -H 'content-type: application/json' -d '{"links":["example.com"]}'`,
         ],
-        docs: getDocs(secret),
+        docs: getDocs(token),
       },
       400
     );
   }
 
   // Cleanup old items first
-  await cleanupOldItems(secret);
+  await cleanupOldItems(token);
 
   // Check queue size
-  const currentSize = await getQueueSize(secret);
+  const currentSize = await getQueueSize(token);
   const incomingCount = links.length;
 
   if (currentSize + incomingCount > config.MAX_QUEUE_SIZE) {
@@ -117,37 +117,37 @@ async function handleEnqueue(
         error:
           "Queue limit reached for this endpoint. Wait for delivery or reduce incoming links.",
         limit: config.MAX_QUEUE_SIZE,
-        docs: getDocs(secret),
+        docs: getDocs(token),
       },
       429
     );
   }
 
   // Enqueue links
-  await enqueueLinks(secret, links);
+  await enqueueLinks(token, links);
 
   // Refresh key expiry
-  await refreshExpiry(secret);
+  await refreshExpiry(token);
 
   return jsonResponse({
     ok: true,
     queued: links.length,
     links,
     message: `Queued ${formatLinkCount(links.length)} to be opened in your browser.`,
-    docs: getDocs(secret),
+    docs: getDocs(token),
   });
 }
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { secret: string } }
+  { params }: { params: { token: string } }
 ) {
-  return handleEnqueue(request, params.secret);
+  return handleEnqueue(request, params.token);
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { secret: string } }
+  { params }: { params: { token: string } }
 ) {
-  return handleEnqueue(request, params.secret);
+  return handleEnqueue(request, params.token);
 }

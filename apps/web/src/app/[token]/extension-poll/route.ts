@@ -15,12 +15,12 @@ function jsonResponse(data: PollResponse, status: number = 200) {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { secret: string } }
+  { params }: { params: { token: string } }
 ) {
-  const { secret } = params;
+  const { token } = params;
 
-  // Validate secret
-  if (!validateSecret(secret)) {
+  // Validate secret (token is the secret)
+  if (!validateSecret(token)) {
     return jsonResponse(
       {
         ok: false,
@@ -31,14 +31,14 @@ export async function GET(
   }
 
   // Cleanup old items first
-  await cleanupOldItems(secret);
+  await cleanupOldItems(token);
 
   // Dequeue links
-  const links = await dequeueLinks(secret, config.MAX_DELIVER_PER_POLL);
+  const links = await dequeueLinks(token, config.MAX_DELIVER_PER_POLL);
 
   // Refresh key expiry if there are still items
   if (links.length > 0) {
-    await refreshExpiry(secret);
+    await refreshExpiry(token);
   }
 
   return jsonResponse({

@@ -71,7 +71,7 @@ export function validateSecret(secret: string): boolean {
  */
 export function getWebhookUrl(secret: string, baseUrl?: string): string {
   const base = baseUrl ?? CONFIG.PUBLIC_BASE_URL;
-  return `${base}/api/${secret}`;
+  return `${base}/${secret}`;
 }
 
 /**
@@ -79,5 +79,5 @@ export function getWebhookUrl(secret: string, baseUrl?: string): string {
  */
 export function getPollUrl(secret: string, baseUrl?: string): string {
   const base = baseUrl ?? CONFIG.PUBLIC_BASE_URL;
-  return `${base}/api/${secret}/extension-poll`;
+  return `${base}/${secret}/extension-poll`;
 }

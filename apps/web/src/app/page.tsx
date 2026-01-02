@@ -59,12 +59,12 @@ export default function Home() {
       <h2>API Usage</h2>
       <h3>Enqueue links</h3>
       <pre>
-        {`GET /api/${secretDisplay}?link=example.com
-GET /api/${secretDisplay}?link=a.com,b.com,c.com
-POST /api/${secretDisplay} with {"links": ["a.com", "b.com"]}`}
+        {`GET /${secretDisplay}?link=example.com
+GET /${secretDisplay}?link=a.com,b.com,c.com
+POST /${secretDisplay} with {"links": ["a.com", "b.com"]}`}
       </pre>
       <h3>Poll for links (used by extension)</h3>
-      <pre>{`GET /api/${secretDisplay}/extension-poll`}</pre>
+      <pre>{`GET /${secretDisplay}/extension-poll`}</pre>
     </main>
   );
 }
