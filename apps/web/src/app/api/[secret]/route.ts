@@ -5,6 +5,7 @@ import {
   getConfig,
   INVALID_SECRET_ERROR,
   EnqueueResponse,
+  DocsInfo,
 } from "@otl/shared";
 import {
   cleanupOldItems,
@@ -14,6 +15,20 @@ import {
 } from "@/lib/redis";
 
 const config = getConfig();
+
+function getDocs(secret?: string): DocsInfo {
+  const isValidSecret = secret && validateSecret(secret);
+  return {
+    hyperlink: isValidSecret
+      ? `${config.PUBLIC_BASE_URL}/#${secret}`
+      : config.PUBLIC_BASE_URL,
+    note: "Want to know how to use this tool to open links in your local browser from automation tools like n8n, Zapier, your own code, or anywhere you can trigger webhooks?",
+  };
+}
+
+function formatLinkCount(count: number): string {
+  return count === 1 ? "one link" : `${count} links`;
+}
 
 function jsonResponse(data: EnqueueResponse, status: number = 200) {
   return NextResponse.json(data, { status });
@@ -29,6 +44,7 @@ async function handleEnqueue(
       {
         ok: false,
         error: INVALID_SECRET_ERROR,
+        docs: getDocs(),
       },
       400
     );
@@ -81,6 +97,7 @@ async function handleEnqueue(
           `${config.PUBLIC_BASE_URL}/api/<SECRET>?link=example.com`,
           `curl -X POST ${config.PUBLIC_BASE_URL}/api/<SECRET> -H 'content-type: application/json' -d '{"links":["example.com"]}'`,
         ],
+        docs: getDocs(secret),
       },
       400
     );
@@ -100,6 +117,7 @@ async function handleEnqueue(
         error:
           "Queue limit reached for this endpoint. Wait for delivery or reduce incoming links.",
         limit: config.MAX_QUEUE_SIZE,
+        docs: getDocs(secret),
       },
       429
     );
@@ -115,7 +133,8 @@ async function handleEnqueue(
     ok: true,
     queued: links.length,
     links,
-    message: `Queued ${links.length} link(s).`,
+    message: `Queued ${formatLinkCount(links.length)} to be opened in your browser.`,
+    docs: getDocs(secret),
   });
 }
 
