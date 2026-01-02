@@ -44,7 +44,10 @@ let lastLinkEl: HTMLAnchorElement;
  */
 function updateWebhookDisplay(secret: string, baseUrl: string) {
   const webhookUrl = getWebhookUrl(secret, baseUrl);
-  const isCustom = baseUrl !== CONFIG.PUBLIC_BASE_URL;
+
+  // Check if using the default server (normalize for comparison)
+  const normalizedBaseUrl = baseUrl.toLowerCase().replace(/\/$/, "");
+  const isSelfHosted = normalizedBaseUrl !== "https://openthat.link";
 
   webhookUrlInput.value = webhookUrl;
 
@@ -57,15 +60,15 @@ function updateWebhookDisplay(secret: string, baseUrl: string) {
 
   exampleMultiple.textContent = `${webhookUrl}?link=a.com,b.com,c.com`;
 
-  // Show/hide custom badge
-  if (isCustom) {
+  // Show/hide self-hosted badge
+  if (isSelfHosted) {
     customBadge.classList.remove("hidden");
   } else {
     customBadge.classList.add("hidden");
   }
 
   // Update base URL input
-  baseUrlInput.value = isCustom ? baseUrl : "";
+  baseUrlInput.value = isSelfHosted ? baseUrl : "";
   baseUrlInput.placeholder = CONFIG.PUBLIC_BASE_URL;
 }
 
@@ -271,9 +274,12 @@ async function init() {
     "saveConfigBtn"
   ) as HTMLButtonElement;
   saveConfigBtn.addEventListener("click", async () => {
-    const newBaseUrl = baseUrlInput.value.trim();
+    const newBaseUrl = baseUrlInput.value.trim().replace(/\/$/, "");
 
-    if (newBaseUrl) {
+    // If empty or matches default, reset to default
+    if (!newBaseUrl || newBaseUrl === CONFIG.PUBLIC_BASE_URL) {
+      await resetBaseUrl();
+    } else {
       // Validate URL format
       try {
         new URL(newBaseUrl);
@@ -282,9 +288,6 @@ async function init() {
         return;
       }
       await storeBaseUrl(newBaseUrl);
-    } else {
-      // Empty means use default
-      await resetBaseUrl();
     }
 
     const updatedBaseUrl = await getStoredBaseUrl();
