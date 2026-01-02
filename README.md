@@ -6,10 +6,19 @@ Open links in your browser from Zapier, n8n, or any webhook-capable automation t
 
 ## How it works
 
-1. **Install the Chrome extension** - generates a unique webhook URL
+1. **Install the browser extension** - generates a unique webhook URL
 2. **Copy your webhook URL** - shown in the extension popup
 3. **Send links to the webhook** - from Zapier, n8n, or any tool
 4. **Links open automatically** - in your browser within ~30 seconds
+
+## Browser Extension
+
+| Browser | Status |
+|---------|--------|
+| Chrome / Edge | [Load unpacked](apps/extension/README.md#chrome--edge) |
+| Firefox | [Load temporary](apps/extension/README.md#firefox) |
+
+See the [extension README](apps/extension/README.md) for installation, development, and self-hosting configuration.
 
 ## Quick Start
 
@@ -118,14 +127,28 @@ The Upstash integration automatically provides credentials. We support both nami
 ```
 openthatlink/
 ├── apps/
-│   ├── web/              # Next.js web app (+ vercel.json)
-│   └── extension/        # Chrome extension (coming soon)
+│   ├── web/              # Next.js web app
+│   └── extension/        # Browser extension (Chrome, Firefox, Edge)
 ├── packages/
 │   └── shared/           # Shared types and utilities
 ├── .env.example
 ├── pnpm-workspace.yaml
 └── README.md
 ```
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start web app dev server |
+| `pnpm build` | Build web app for production |
+| `pnpm ext:dev` | Start extension dev mode (Chrome) |
+| `pnpm ext:dev:firefox` | Start extension dev mode (Firefox) |
+| `pnpm ext:build` | Build extension for Chrome |
+| `pnpm ext:build:firefox` | Build extension for Firefox |
+| `pnpm ext:build:all` | Build extension for all browsers |
+| `pnpm ext:zip` | Build + zip for Chrome Web Store |
+| `pnpm ext:zip:all` | Build + zip for all stores |
 
 ## White-labeling
 

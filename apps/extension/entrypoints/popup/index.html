@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenThat.link</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #1a1a1a;
+        background: #fff;
+        min-width: 420px;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e5e5e5;
+      }
+
+      .header img {
+        width: 32px;
+        height: 32px;
+      }
+
+      .header h1 {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .section {
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #666;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+      }
+
+      .webhook-url {
+        display: flex;
+        gap: 8px;
+        align-items: stretch;
+      }
+
+      .webhook-url input {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-family: "SF Mono", Monaco, "Courier New", monospace;
+        font-size: 12px;
+        background: #f9f9f9;
+        color: #333;
+      }
+
+      .webhook-url input:focus {
+        outline: none;
+        border-color: #0066cc;
+        background: #fff;
+      }
+
+      button {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .btn-primary {
+        background: #0066cc;
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background: #0052a3;
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .btn-secondary:hover {
+        background: #e0e0e0;
+      }
+
+      .btn-danger {
+        background: #fff;
+        color: #cc3333;
+        border: 1px solid #cc3333;
+      }
+
+      .btn-danger:hover {
+        background: #cc3333;
+        color: #fff;
+      }
+
+      .btn-small {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .copied {
+        background: #22c55e !important;
+      }
+
+      .example {
+        background: #f5f5f5;
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .example-title {
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 6px;
+        color: #333;
+      }
+
+      .example-code {
+        font-family: "SF Mono", Monaco, "Courier New", monospace;
+        font-size: 11px;
+        background: #1a1a1a;
+        color: #e5e5e5;
+        padding: 10px 12px;
+        border-radius: 4px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        background: #f0f9f0;
+        border-radius: 6px;
+        color: #166534;
+        font-size: 13px;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .footer {
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #e5e5e5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .footer a {
+        color: #0066cc;
+        text-decoration: none;
+        font-size: 13px;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      .warning {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        color: #9a3412;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      /* Collapsible section */
+      .collapsible {
+        border: 1px solid #e5e5e5;
+        border-radius: 6px;
+        margin-top: 16px;
+      }
+
+      .collapsible-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 14px;
+        cursor: pointer;
+        user-select: none;
+        background: #fafafa;
+        border-radius: 6px;
+      }
+
+      .collapsible-header:hover {
+        background: #f5f5f5;
+      }
+
+      .collapsible-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: #666;
+      }
+
+      .collapsible-arrow {
+        font-size: 10px;
+        color: #999;
+        transition: transform 0.2s ease;
+      }
+
+      .collapsible.open .collapsible-arrow {
+        transform: rotate(180deg);
+      }
+
+      .collapsible.open .collapsible-header {
+        border-bottom: 1px solid #e5e5e5;
+        border-radius: 6px 6px 0 0;
+      }
+
+      .collapsible-content {
+        padding: 14px;
+        display: none;
+      }
+
+      .collapsible.open .collapsible-content {
+        display: block;
+      }
+
+      .form-group {
+        margin-bottom: 14px;
+      }
+
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 6px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #0066cc;
+      }
+
+      .form-hint {
+        font-size: 11px;
+        color: #888;
+        margin-top: 4px;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .custom-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        background: #e0e7ff;
+        color: #4338ca;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <img src="/icon/128.png" alt="OpenThat.link" />
+      <h1>OpenThat.link</h1>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        Your Webhook URL
+        <span id="customBadge" class="custom-badge hidden">Custom Server</span>
+      </div>
+      <div class="webhook-url">
+        <input type="text" id="webhookUrl" readonly />
+        <button class="btn-primary" id="copyBtn">Copy</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="status">
+        <span class="status-dot"></span>
+        <span>Polling every 30 seconds</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Usage Examples</div>
+
+      <div class="example">
+        <div class="example-title">Simple GET Request</div>
+        <div class="example-code" id="exampleGet"></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">cURL (POST with JSON)</div>
+        <div class="example-code" id="exampleCurl"></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Multiple Links</div>
+        <div class="example-code" id="exampleMultiple"></div>
+      </div>
+    </div>
+
+    <div class="collapsible" id="advancedSection">
+      <div class="collapsible-header" id="advancedToggle">
+        <span class="collapsible-title">Advanced Configuration</span>
+        <span class="collapsible-arrow">&#9660;</span>
+      </div>
+      <div class="collapsible-content">
+        <div class="form-group">
+          <label class="form-label">Server URL</label>
+          <input
+            type="text"
+            class="form-input"
+            id="baseUrlInput"
+            placeholder="https://openthat.link"
+          />
+          <div class="form-hint">
+            For self-hosted instances. Leave empty to use the default server.
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-primary btn-small" id="saveConfigBtn">
+            Save Configuration
+          </button>
+          <button class="btn-secondary btn-small" id="resetConfigBtn">
+            Reset to Default
+          </button>
+        </div>
+
+        <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #e5e5e5;">
+          <div class="form-group">
+            <label class="form-label">Regenerate Secret</label>
+            <div id="regenerateSection">
+              <button class="btn-secondary btn-small" id="showRegenerateBtn">
+                Regenerate Secret
+              </button>
+            </div>
+            <div id="regenerateConfirm" class="hidden" style="margin-top: 8px;">
+              <div class="warning">
+                Warning: This will invalidate your current webhook URL. Any
+                existing automations will stop working until you update them.
+              </div>
+              <div style="display: flex; gap: 8px">
+                <button class="btn-danger btn-small" id="confirmRegenerateBtn">
+                  Yes, Regenerate
+                </button>
+                <button class="btn-secondary btn-small" id="cancelRegenerateBtn">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <a href="https://openthat.link" target="_blank">openthat.link</a>
+      <a
+        href="https://github.com/stuessgen/openthatlink"
+        target="_blank"
+        style="color: #666"
+        >View on GitHub</a
+      >
+    </div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

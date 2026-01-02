@@ -5,7 +5,14 @@
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
     "start": "pnpm --filter web start",
-    "lint": "pnpm --filter '*' lint"
+    "lint": "pnpm --filter '*' lint",
+    "ext:dev": "pnpm --filter @otl/extension dev",
+    "ext:dev:firefox": "pnpm --filter @otl/extension dev:firefox",
+    "ext:build": "pnpm --filter @otl/extension build",
+    "ext:build:firefox": "pnpm --filter @otl/extension build:firefox",
+    "ext:build:all": "pnpm --filter @otl/extension build:all",
+    "ext:zip": "pnpm --filter @otl/extension zip",
+    "ext:zip:all": "pnpm --filter @otl/extension zip:all"
   },
   "devDependencies": {
     "typescript": "^5.3.0"
