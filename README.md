@@ -2,7 +2,7 @@
 
 Open links in your browser from Zapier, n8n, or any webhook-capable automation tool.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftobyurff%2Fopenthatlink&project-name=openthatlink&repository-name=openthatlink&integration-ids=oac_V3R1GIpkoJorr6fqyiwdhl17)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftobyurff%2Fopenthatlink&root-directory=apps%2Fweb&project-name=openthatlink&repository-name=openthatlink&integration-ids=oac_V3R1GIpkoJorr6fqyiwdhl17)
 
 ## How it works
 
@@ -117,7 +117,7 @@ All environment variables are optional and have sensible defaults.
 ```
 openthatlink/
 ├── apps/
-│   ├── web/              # Next.js web app
+│   ├── web/              # Next.js web app (+ vercel.json)
 │   └── extension/        # Chrome extension (coming soon)
 ├── packages/
 │   └── shared/           # Shared types and utilities
