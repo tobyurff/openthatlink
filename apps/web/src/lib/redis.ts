@@ -15,7 +15,7 @@ interface RedisClient {
     key: string,
     start: number,
     stop: number
-  ): Promise<string[]>;
+  ): Promise<(string | object)[]>;
   zremrangebyrank(key: string, start: number, stop: number): Promise<number>;
   zremrangebyscore(
     key: string,
@@ -60,7 +60,7 @@ function createUpstashClient(url: string, token: string): RedisClient {
     },
     async zrange(key: string, start: number, stop: number) {
       const result = await client.zrange(key, start, stop);
-      return result as string[];
+      return result as (string | object)[];
     },
     async zremrangebyrank(key: string, start: number, stop: number) {
       return client.zremrangebyrank(key, start, stop);
@@ -202,8 +202,9 @@ export async function dequeueLinks(
   await redis.zremrangebyrank(key, 0, items.length - 1);
 
   // Parse and return URLs
+  // Note: Upstash auto-parses JSON, ioredis returns strings
   return items.map((item) => {
-    const parsed = JSON.parse(item) as QueueItem;
-    return parsed.url;
+    const parsed = typeof item === "string" ? JSON.parse(item) : item;
+    return (parsed as QueueItem).url;
   });
 }
