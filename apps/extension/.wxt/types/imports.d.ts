@@ -21,6 +21,9 @@ declare global {
   const fakeBrowser: typeof import('wxt/testing')['fakeBrowser']
   const generateSecret: typeof import('/workspace/openthatlink/apps/extension/utils/secret')['generateSecret']
   const getExtensionConfig: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['getExtensionConfig']
+  const getLastOpenedLink: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['getLastOpenedLink']
+  const getOpenCount: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['getOpenCount']
+  const getOpenStats: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['getOpenStats']
   const getOrCreateSecret: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['getOrCreateSecret']
   const getPollUrl: typeof import('/workspace/openthatlink/apps/extension/utils/secret')['getPollUrl']
   const getStoredBaseUrl: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['getStoredBaseUrl']
@@ -29,6 +32,7 @@ declare global {
   const getWebhookUrl: typeof import('/workspace/openthatlink/apps/extension/utils/secret')['getWebhookUrl']
   const injectScript: typeof import('wxt/client')['injectScript']
   const isTurboModeActive: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['isTurboModeActive']
+  const recordOpenedLink: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['recordOpenedLink']
   const regenerateSecret: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['regenerateSecret']
   const resetBaseUrl: typeof import('/workspace/openthatlink/apps/extension/utils/storage')['resetBaseUrl']
   const storage: typeof import('wxt/storage')['storage']
@@ -43,6 +47,6 @@ declare global {
   export type { Config } from '/workspace/openthatlink/apps/extension/utils/config'
   import('/workspace/openthatlink/apps/extension/utils/config')
   // @ts-ignore
-  export type { ExtensionConfig } from '/workspace/openthatlink/apps/extension/utils/storage'
+  export type { ExtensionConfig, OpenStats } from '/workspace/openthatlink/apps/extension/utils/storage'
   import('/workspace/openthatlink/apps/extension/utils/storage')
 }

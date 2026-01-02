@@ -5,6 +5,7 @@ import {
   getStoredBaseUrl,
   isTurboModeActive,
   getTurboEndTime,
+  recordOpenedLink,
 } from "@/utils/storage";
 import { getPollUrl } from "@/utils/secret";
 
@@ -65,6 +66,7 @@ async function pollForLinks(): Promise<void> {
     for (const url of links) {
       try {
         await browser.tabs.create({ url, active: false });
+        await recordOpenedLink(url);
       } catch (err) {
         console.error("[OTL] Failed to open tab:", url, err);
       }

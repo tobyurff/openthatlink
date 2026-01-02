@@ -4,6 +4,8 @@ import { generateSecret, validateSecret } from "./secret";
 const STORAGE_KEY_SECRET = CONFIG.STORAGE_KEY_SECRET;
 const STORAGE_KEY_BASE_URL = "otl_base_url";
 const STORAGE_KEY_TURBO_END = CONFIG.STORAGE_KEY_TURBO_END;
+const STORAGE_KEY_OPEN_COUNT = CONFIG.STORAGE_KEY_OPEN_COUNT;
+const STORAGE_KEY_LAST_LINK = CONFIG.STORAGE_KEY_LAST_LINK;
 
 export interface ExtensionConfig {
   secret: string;
@@ -136,4 +138,54 @@ export async function enableTurboMode(): Promise<number> {
  */
 export async function disableTurboMode(): Promise<void> {
   await browser.storage.local.remove(STORAGE_KEY_TURBO_END);
+}
+
+/**
+ * Get the total count of links opened
+ */
+export async function getOpenCount(): Promise<number> {
+  const result = await browser.storage.local.get(STORAGE_KEY_OPEN_COUNT);
+  const count = result[STORAGE_KEY_OPEN_COUNT];
+  return typeof count === "number" ? count : 0;
+}
+
+/**
+ * Increment the open count and store the last link
+ */
+export async function recordOpenedLink(url: string): Promise<number> {
+  const currentCount = await getOpenCount();
+  const newCount = currentCount + 1;
+  await browser.storage.local.set({
+    [STORAGE_KEY_OPEN_COUNT]: newCount,
+    [STORAGE_KEY_LAST_LINK]: url,
+  });
+  return newCount;
+}
+
+/**
+ * Get the last opened link
+ */
+export async function getLastOpenedLink(): Promise<string | null> {
+  const result = await browser.storage.local.get(STORAGE_KEY_LAST_LINK);
+  const link = result[STORAGE_KEY_LAST_LINK];
+  return typeof link === "string" ? link : null;
+}
+
+export interface OpenStats {
+  count: number;
+  lastLink: string | null;
+}
+
+/**
+ * Get open stats (count and last link)
+ */
+export async function getOpenStats(): Promise<OpenStats> {
+  const result = await browser.storage.local.get([
+    STORAGE_KEY_OPEN_COUNT,
+    STORAGE_KEY_LAST_LINK,
+  ]);
+  return {
+    count: typeof result[STORAGE_KEY_OPEN_COUNT] === "number" ? result[STORAGE_KEY_OPEN_COUNT] : 0,
+    lastLink: typeof result[STORAGE_KEY_LAST_LINK] === "string" ? result[STORAGE_KEY_LAST_LINK] : null,
+  };
 }

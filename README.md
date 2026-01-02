@@ -1,4 +1,4 @@
-# OpenThat.link
+# OpenThat.Link
 
 Open links in your browser from Zapier, n8n, or any webhook-capable automation tool.
 

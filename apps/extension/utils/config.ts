@@ -3,7 +3,7 @@
 
 export const CONFIG = {
   // App branding
-  APP_NAME: "OpenThat.link",
+  APP_NAME: "OpenThat.Link",
   PUBLIC_BASE_URL: "https://openthat.link",
 
   // Secret format (must match server)
@@ -21,6 +21,8 @@ export const CONFIG = {
   // Storage keys
   STORAGE_KEY_SECRET: "otl_secret",
   STORAGE_KEY_TURBO_END: "otl_turbo_end", // Timestamp when turbo mode expires
+  STORAGE_KEY_OPEN_COUNT: "otl_open_count", // Total links opened
+  STORAGE_KEY_LAST_LINK: "otl_last_link", // Last opened link
 } as const;
 
 export type Config = typeof CONFIG;

@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <main style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem" }}>
-      <h1>OpenThat.link</h1>
+      <h1>OpenThat.Link</h1>
       <p>
         Open links in your browser from Zapier, n8n, or any webhook-capable
         tool.

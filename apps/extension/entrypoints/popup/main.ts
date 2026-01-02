@@ -8,6 +8,7 @@ import {
   getTurboEndTime,
   enableTurboMode,
   disableTurboMode,
+  getOpenStats,
 } from "@/utils/storage";
 import { getWebhookUrl } from "@/utils/secret";
 
@@ -32,6 +33,11 @@ let turboCountdown: HTMLElement;
 
 // Turbo mode countdown timer
 let turboCountdownInterval: ReturnType<typeof setInterval> | null = null;
+
+// Stats elements
+let openCountEl: HTMLElement;
+let lastLinkSection: HTMLElement;
+let lastLinkEl: HTMLAnchorElement;
 
 /**
  * Update all UI elements with the current webhook URL
@@ -151,6 +157,39 @@ function stopTurboCountdown(): void {
   }
 }
 
+/**
+ * Truncate a URL for display
+ */
+function truncateUrl(url: string, maxLength = 40): string {
+  try {
+    const parsed = new URL(url);
+    const display = parsed.hostname + parsed.pathname;
+    if (display.length <= maxLength) return display;
+    return display.substring(0, maxLength - 3) + "...";
+  } catch {
+    if (url.length <= maxLength) return url;
+    return url.substring(0, maxLength - 3) + "...";
+  }
+}
+
+/**
+ * Update the stats display
+ */
+async function updateStatsDisplay(): Promise<void> {
+  const stats = await getOpenStats();
+
+  openCountEl.textContent = stats.count.toString();
+
+  if (stats.lastLink) {
+    lastLinkSection.style.display = "block";
+    lastLinkEl.href = stats.lastLink;
+    lastLinkEl.textContent = truncateUrl(stats.lastLink);
+    lastLinkEl.title = stats.lastLink;
+  } else {
+    lastLinkSection.style.display = "none";
+  }
+}
+
 async function init() {
   // Get DOM elements
   webhookUrlInput = document.getElementById("webhookUrl") as HTMLInputElement;
@@ -178,8 +217,16 @@ async function init() {
   // Initial UI update
   updateWebhookDisplay(secret, baseUrl);
 
+  // Get stats DOM elements
+  openCountEl = document.getElementById("openCount") as HTMLElement;
+  lastLinkSection = document.getElementById("lastLinkSection") as HTMLElement;
+  lastLinkEl = document.getElementById("lastLink") as HTMLAnchorElement;
+
   // Initialize turbo mode UI
   await updateTurboModeUI();
+
+  // Initialize stats display
+  await updateStatsDisplay();
 
   // Copy button functionality
   copyBtn.addEventListener("click", async () => {

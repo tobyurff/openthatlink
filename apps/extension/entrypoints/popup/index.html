@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpenThat.link</title>
+    <title>OpenThat.Link</title>
     <style>
       * {
         box-sizing: border-box;
@@ -357,12 +357,47 @@
         background: #f59e0b;
         animation: turbo-pulse 0.5s infinite;
       }
+
+      /* Stats section */
+      .stats-section {
+        margin-top: 20px;
+        padding: 14px;
+        background: #f9fafb;
+        border-radius: 6px;
+        text-align: center;
+      }
+
+      .stats-count {
+        font-size: 14px;
+        color: #374151;
+      }
+
+      .stats-count span {
+        font-weight: 600;
+        color: #0066cc;
+      }
+
+      .stats-last-link {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .stats-last-link a {
+        color: #0066cc;
+        text-decoration: none;
+        word-break: break-all;
+      }
+
+      .stats-last-link a:hover {
+        text-decoration: underline;
+      }
     </style>
   </head>
   <body>
     <div class="header">
-      <img src="/icon/128.png" alt="OpenThat.link" />
-      <h1>OpenThat.link</h1>
+      <img src="/icon/128.png" alt="OpenThat.Link" />
+      <h1>OpenThat.Link</h1>
     </div>
 
     <div class="section">
@@ -478,6 +513,15 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="stats-section" id="statsSection">
+      <div class="stats-count">
+        <span id="openCount">0</span> links opened
+      </div>
+      <div class="stats-last-link" id="lastLinkSection">
+        Last: <a href="#" id="lastLink" target="_blank" title=""></a>
       </div>
     </div>
 

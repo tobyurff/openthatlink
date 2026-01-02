@@ -6,7 +6,7 @@ export default defineConfig({
 
   // Extension metadata
   manifest: {
-    name: "OpenThat.link",
+    name: "OpenThat.Link",
     description:
       "Open links in your browser from Zapier, n8n, Make, or any webhook-capable tool.",
     version: "1.0.0",
@@ -26,7 +26,7 @@ export default defineConfig({
         48: "/icon/48.png",
         128: "/icon/128.png",
       },
-      default_title: "OpenThat.link",
+      default_title: "OpenThat.Link",
     },
   },
 

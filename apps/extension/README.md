@@ -1,4 +1,4 @@
-# OpenThat.link Browser Extension
+# OpenThat.Link Browser Extension
 
 Browser extension that polls for links from your webhook and opens them automatically.
 
@@ -59,7 +59,7 @@ curl "https://openthat.link/api/YOUR_SECRET?link=a.com,b.com,c.com"
 
 ## Self-Hosting
 
-If you've deployed your own OpenThat.link instance:
+If you've deployed your own OpenThat.Link instance:
 
 1. Click the extension icon
 2. Expand **Advanced Configuration**
@@ -199,4 +199,4 @@ apps/extension/
 
 1. Chrome MV3 service workers can be suspended - this is normal
 2. The alarm will wake up the service worker every 30 seconds
-3. Check `chrome://extensions/` > OpenThat.link > "Service worker" link for logs
+3. Check `chrome://extensions/` > OpenThat.Link > "Service worker" link for logs
