@@ -316,6 +316,47 @@
         border-radius: 4px;
         margin-left: 8px;
       }
+
+      /* Turbo mode styles */
+      .turbo-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        background: #fef3c7;
+        border-radius: 4px;
+        color: #92400e;
+        font-size: 12px;
+      }
+
+      .turbo-indicator {
+        width: 8px;
+        height: 8px;
+        background: #f59e0b;
+        border-radius: 50%;
+        animation: turbo-pulse 0.5s infinite;
+      }
+
+      @keyframes turbo-pulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.7;
+          transform: scale(1.2);
+        }
+      }
+
+      .status.turbo-active {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .status.turbo-active .status-dot {
+        background: #f59e0b;
+        animation: turbo-pulse 0.5s infinite;
+      }
     </style>
   </head>
   <body>
@@ -336,9 +377,9 @@
     </div>
 
     <div class="section">
-      <div class="status">
-        <span class="status-dot"></span>
-        <span>Polling every 30 seconds</span>
+      <div class="status" id="statusBar">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Polling every 60 seconds</span>
       </div>
     </div>
 
@@ -367,6 +408,29 @@
         <span class="collapsible-arrow">&#9660;</span>
       </div>
       <div class="collapsible-content">
+        <!-- Turbo Mode Section -->
+        <div class="form-group">
+          <label class="form-label">Turbo Mode</label>
+          <div class="form-hint" style="margin-bottom: 8px;">
+            Temporarily polls for links to open every 10 seconds for the next 5 minutes. Useful when actively working and testing new automations.
+          </div>
+          <div id="turboSection">
+            <button class="btn-secondary btn-small" id="enableTurboBtn">
+              Enable Turbo Mode
+            </button>
+          </div>
+          <div id="turboActiveSection" class="hidden">
+            <div class="turbo-status">
+              <span class="turbo-indicator"></span>
+              <span>Turbo mode active - <span id="turboCountdown">5:00</span> remaining</span>
+            </div>
+            <button class="btn-secondary btn-small" id="disableTurboBtn" style="margin-top: 8px;">
+              Disable Turbo Mode
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #e5e5e5;">
         <div class="form-group">
           <label class="form-label">Server URL</label>
           <input
@@ -387,6 +451,7 @@
           <button class="btn-secondary btn-small" id="resetConfigBtn">
             Reset to Default
           </button>
+        </div>
         </div>
 
         <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #e5e5e5;">

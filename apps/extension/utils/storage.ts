@@ -3,6 +3,7 @@ import { generateSecret, validateSecret } from "./secret";
 
 const STORAGE_KEY_SECRET = CONFIG.STORAGE_KEY_SECRET;
 const STORAGE_KEY_BASE_URL = "otl_base_url";
+const STORAGE_KEY_TURBO_END = CONFIG.STORAGE_KEY_TURBO_END;
 
 export interface ExtensionConfig {
   secret: string;
@@ -91,4 +92,48 @@ export async function regenerateSecret(): Promise<string> {
   const newSecret = generateSecret();
   await storeSecret(newSecret);
   return newSecret;
+}
+
+/**
+ * Check if turbo mode is currently active
+ */
+export async function isTurboModeActive(): Promise<boolean> {
+  const result = await browser.storage.local.get(STORAGE_KEY_TURBO_END);
+  const endTime = result[STORAGE_KEY_TURBO_END];
+
+  if (typeof endTime === "number" && endTime > Date.now()) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Get the turbo mode end timestamp (or null if not active)
+ */
+export async function getTurboEndTime(): Promise<number | null> {
+  const result = await browser.storage.local.get(STORAGE_KEY_TURBO_END);
+  const endTime = result[STORAGE_KEY_TURBO_END];
+
+  if (typeof endTime === "number" && endTime > Date.now()) {
+    return endTime;
+  }
+
+  return null;
+}
+
+/**
+ * Enable turbo mode for the configured duration
+ */
+export async function enableTurboMode(): Promise<number> {
+  const endTime = Date.now() + CONFIG.TURBO_DURATION_MINUTES * 60 * 1000;
+  await browser.storage.local.set({ [STORAGE_KEY_TURBO_END]: endTime });
+  return endTime;
+}
+
+/**
+ * Disable turbo mode
+ */
+export async function disableTurboMode(): Promise<void> {
+  await browser.storage.local.remove(STORAGE_KEY_TURBO_END);
 }

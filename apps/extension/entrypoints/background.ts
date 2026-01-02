@@ -1,8 +1,15 @@
 import { CONFIG } from "@/utils/config";
-import { getStoredSecret, getOrCreateSecret, getStoredBaseUrl } from "@/utils/storage";
+import {
+  getStoredSecret,
+  getOrCreateSecret,
+  getStoredBaseUrl,
+  isTurboModeActive,
+  getTurboEndTime,
+} from "@/utils/storage";
 import { getPollUrl } from "@/utils/secret";
 
 const ALARM_NAME = "otl-poll";
+const TURBO_ALARM_NAME = "otl-turbo-poll";
 
 interface PollResponse {
   ok: boolean;
@@ -68,29 +75,79 @@ async function pollForLinks(): Promise<void> {
 }
 
 /**
- * Set up the polling alarm
+ * Set up the normal polling alarm (1 minute interval)
  */
-async function setupAlarm(): Promise<void> {
-  // Clear any existing alarm
+async function setupNormalAlarm(): Promise<void> {
+  // Clear any existing alarms
   await browser.alarms.clear(ALARM_NAME);
 
-  // Create a new alarm
-  // periodInMinutes minimum is 0.5 (30 seconds) for MV3
+  // Create a periodic alarm for normal mode
   await browser.alarms.create(ALARM_NAME, {
     periodInMinutes: CONFIG.POLL_INTERVAL_MINUTES,
-    // Start immediately (within the first period)
     delayInMinutes: 0.05, // ~3 seconds initial delay
   });
 
   console.log(
-    `[OTL] Polling alarm set for every ${CONFIG.POLL_INTERVAL_MINUTES * 60} seconds`
+    `[OTL] Normal polling alarm set for every ${CONFIG.POLL_INTERVAL_MINUTES * 60} seconds`
   );
 }
 
+/**
+ * Schedule the next turbo mode poll (chained one-time alarms for 10s intervals)
+ */
+async function scheduleTurboPoll(): Promise<void> {
+  const turboEndTime = await getTurboEndTime();
+
+  if (!turboEndTime || Date.now() >= turboEndTime) {
+    // Turbo mode expired, switch back to normal
+    console.log("[OTL] Turbo mode expired, switching to normal polling");
+    await browser.alarms.clear(TURBO_ALARM_NAME);
+    await setupNormalAlarm();
+    return;
+  }
+
+  // Schedule next turbo poll (10 seconds)
+  await browser.alarms.create(TURBO_ALARM_NAME, {
+    delayInMinutes: CONFIG.TURBO_POLL_INTERVAL_MINUTES,
+  });
+}
+
+/**
+ * Set up the appropriate polling based on turbo mode state
+ */
+async function setupAlarm(): Promise<void> {
+  const turboActive = await isTurboModeActive();
+
+  if (turboActive) {
+    // Clear normal alarm and start turbo polling
+    await browser.alarms.clear(ALARM_NAME);
+    console.log("[OTL] Turbo mode active - polling every 10 seconds");
+    await pollForLinks(); // Poll immediately
+    await scheduleTurboPoll();
+  } else {
+    // Clear turbo alarm and set up normal polling
+    await browser.alarms.clear(TURBO_ALARM_NAME);
+    await setupNormalAlarm();
+  }
+}
+
 // Listen for alarm events
-browser.alarms.onAlarm.addListener((alarm) => {
+browser.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === ALARM_NAME) {
+    // Normal polling
     pollForLinks();
+  } else if (alarm.name === TURBO_ALARM_NAME) {
+    // Turbo mode polling - poll and schedule next
+    await pollForLinks();
+    await scheduleTurboPoll();
+  }
+});
+
+// Listen for storage changes to detect turbo mode toggle
+browser.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === "local" && changes[CONFIG.STORAGE_KEY_TURBO_END]) {
+    console.log("[OTL] Turbo mode state changed, reconfiguring alarms");
+    setupAlarm();
   }
 });
 
