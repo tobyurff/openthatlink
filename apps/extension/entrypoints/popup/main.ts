@@ -15,8 +15,8 @@ import { getWebhookUrl } from "@/utils/secret";
 // DOM elements
 let webhookUrlInput: HTMLInputElement;
 let exampleGet: HTMLElement;
+let exampleEncoded: HTMLElement;
 let exampleCurl: HTMLElement;
-let exampleMultiple: HTMLElement;
 let copyBtn: HTMLButtonElement;
 let customBadge: HTMLElement;
 let baseUrlInput: HTMLInputElement;
@@ -39,6 +39,9 @@ let openCountEl: HTMLElement;
 let lastLinkSection: HTMLElement;
 let lastLinkEl: HTMLAnchorElement;
 
+// Footer elements
+let footerLink: HTMLAnchorElement;
+
 /**
  * Update all UI elements with the current webhook URL
  */
@@ -49,16 +52,20 @@ function updateWebhookDisplay(secret: string, baseUrl: string) {
   const normalizedBaseUrl = baseUrl.toLowerCase().replace(/\/$/, "");
   const isSelfHosted = normalizedBaseUrl !== "https://openthat.link";
 
-  webhookUrlInput.value = webhookUrl;
+  // Show webhook URL with example link
+  webhookUrlInput.value = `${webhookUrl}?link=example.com`;
 
   // Update examples with actual webhook URL
-  exampleGet.textContent = `${webhookUrl}?link=example.com`;
+  exampleGet.textContent = `${webhookUrl}?link=yahoo.com,google.com`;
+
+  // URL-encoded example with Google News URLs (English and French)
+  const googleNewsEN = encodeURIComponent("https://news.google.com/home?hl=en-US");
+  const googleNewsFR = encodeURIComponent("https://news.google.com/home?hl=fr-FR");
+  exampleEncoded.textContent = `${webhookUrl}?links[]=${googleNewsEN}&links[]=${googleNewsFR}`;
 
   exampleCurl.textContent = `curl -X POST ${webhookUrl} \\
   -H "Content-Type: application/json" \\
-  -d '{"links": ["https://example.com"]}'`;
-
-  exampleMultiple.textContent = `${webhookUrl}?link=a.com,b.com,c.com`;
+  -d '{"links": ["https://example.com/some-example-page/"]}'`;
 
   // Show/hide self-hosted badge
   if (isSelfHosted) {
@@ -197,8 +204,8 @@ async function init() {
   // Get DOM elements
   webhookUrlInput = document.getElementById("webhookUrl") as HTMLInputElement;
   exampleGet = document.getElementById("exampleGet") as HTMLElement;
+  exampleEncoded = document.getElementById("exampleEncoded") as HTMLElement;
   exampleCurl = document.getElementById("exampleCurl") as HTMLElement;
-  exampleMultiple = document.getElementById("exampleMultiple") as HTMLElement;
   copyBtn = document.getElementById("copyBtn") as HTMLButtonElement;
   customBadge = document.getElementById("customBadge") as HTMLElement;
   baseUrlInput = document.getElementById("baseUrlInput") as HTMLInputElement;
@@ -225,6 +232,10 @@ async function init() {
   lastLinkSection = document.getElementById("lastLinkSection") as HTMLElement;
   lastLinkEl = document.getElementById("lastLink") as HTMLAnchorElement;
 
+  // Get footer elements and set link with secret
+  footerLink = document.getElementById("footerLink") as HTMLAnchorElement;
+  footerLink.href = `https://openthat.link#${secret}`;
+
   // Initialize turbo mode UI
   await updateTurboModeUI();
 
@@ -243,6 +254,30 @@ async function init() {
       webhookUrlInput.select();
       document.execCommand("copy");
     }
+  });
+
+  // Example copy buttons
+  document.querySelectorAll(".copy-example-btn").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const button = e.target as HTMLButtonElement;
+      const exampleId = button.dataset.example;
+      const exampleEl = document.getElementById(exampleId!) as HTMLElement;
+
+      if (exampleEl) {
+        try {
+          await navigator.clipboard.writeText(exampleEl.textContent || "");
+          const originalText = button.textContent;
+          button.textContent = "Copied!";
+          button.classList.add("copied");
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove("copied");
+          }, 1500);
+        } catch (err) {
+          console.error("Failed to copy example:", err);
+        }
+      }
+    });
   });
 
   // Advanced section toggle
@@ -336,6 +371,9 @@ async function init() {
 
     // Update UI
     updateWebhookDisplay(newSecret, currentBaseUrl);
+
+    // Update footer link with new secret
+    footerLink.href = `https://openthat.link#${newSecret}`;
 
     // Refresh stats (now reset to 0)
     await updateStatsDisplay();
