@@ -337,6 +337,9 @@ async function init() {
     // Update UI
     updateWebhookDisplay(newSecret, currentBaseUrl);
 
+    // Refresh stats (now reset to 0)
+    await updateStatsDisplay();
+
     // Reset UI state
     regenerateConfirm.classList.add("hidden");
     showRegenerateBtn.classList.remove("hidden");

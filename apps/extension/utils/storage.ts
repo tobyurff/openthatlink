@@ -89,10 +89,13 @@ export async function getOrCreateSecret(): Promise<string> {
 
 /**
  * Regenerate the secret (creates a new one, replacing the old)
+ * Also resets stats (open count and last link) for a fresh start
  */
 export async function regenerateSecret(): Promise<string> {
   const newSecret = generateSecret();
   await storeSecret(newSecret);
+  // Reset stats for fresh start
+  await browser.storage.local.remove([STORAGE_KEY_OPEN_COUNT, STORAGE_KEY_LAST_LINK]);
   return newSecret;
 }
 
