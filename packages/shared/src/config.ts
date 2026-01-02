@@ -1,9 +1,14 @@
 // Default configuration values - can be overridden via environment variables
 
+// Vercel provides these automatically
+const VERCEL_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  || process.env.VERCEL_URL
+  || null;
+
 export const DEFAULT_CONFIG = {
   // App branding
-  APP_NAME: "OpenThat.link",
-  PUBLIC_BASE_URL: "https://openthat.link",
+  APP_NAME: "My Personal OpenThat.Link",
+  PUBLIC_BASE_URL: VERCEL_URL ? `https://${VERCEL_URL}` : "http://localhost:3000",
 
   // Secret format
   RECOGNIZABLE_TOKEN: "OTL",

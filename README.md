@@ -2,7 +2,7 @@
 
 Open links in your browser from Zapier, n8n, or any webhook-capable automation tool.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftobyurff%2Fopenthatlink&env=APP_NAME,PUBLIC_BASE_URL&envDescription=Configure%20your%20OpenThat.link%20instance&envLink=https%3A%2F%2Fgithub.com%2Ftobyurff%2Fopenthatlink%23environment-variables&project-name=openthatlink&repository-name=openthatlink&integration-ids=oac_V3R1GIpkoJorr6fqyiwdhl17)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftobyurff%2Fopenthatlink&project-name=openthatlink&repository-name=openthatlink&integration-ids=oac_V3R1GIpkoJorr6fqyiwdhl17)
 
 ## How it works
 
@@ -18,9 +18,10 @@ Open links in your browser from Zapier, n8n, or any webhook-capable automation t
 Click the "Deploy with Vercel" button above. During setup:
 
 1. Connect your GitHub account
-2. Configure the Upstash Redis integration (provides `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`)
-3. Set the required environment variables
-4. Deploy!
+2. Configure the Upstash Redis integration (automatically provides Redis credentials)
+3. Deploy!
+
+That's it! All environment variables have sensible defaults. The app will auto-detect your Vercel URL.
 
 ### Local Development
 
@@ -88,10 +89,12 @@ GET /api/:secret/extension-poll
 
 ## Environment Variables
 
+All environment variables are optional and have sensible defaults.
+
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `APP_NAME` | `OpenThat.link` | Application name |
-| `PUBLIC_BASE_URL` | `https://openthat.link` | Public URL of your deployment |
+| `APP_NAME` | `My Personal OpenThat.Link` | Application name |
+| `PUBLIC_BASE_URL` | Auto-detected from Vercel | Public URL of your deployment |
 | `RECOGNIZABLE_TOKEN` | `OTL` | Token embedded in secrets |
 | `SECRET_TOTAL_LEN` | `16` | Total length of generated secrets |
 | `SECRET_INSERT_POS` | `8` | Position to insert token |
