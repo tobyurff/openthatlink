@@ -26,9 +26,23 @@ interface RedisClient {
   expire(key: string, seconds: number): Promise<number>;
 }
 
+// Get Upstash credentials from various env var naming conventions
+function getUpstashCredentials(): { url: string; token: string } | null {
+  // Try different naming conventions used by Vercel integrations
+  const url = process.env.UPSTASH_REDIS_REST_URL
+    || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+    || process.env.KV_REST_API_TOKEN;
+
+  if (url && token) {
+    return { url, token };
+  }
+  return null;
+}
+
 // Upstash Redis client (REST API based)
-function createUpstashClient(): RedisClient {
-  const client = UpstashRedis.fromEnv();
+function createUpstashClient(url: string, token: string): RedisClient {
+  const client = new UpstashRedis({ url, token });
 
   return {
     async zadd(key: string, ...args: (string | number)[]) {
@@ -114,11 +128,12 @@ export function getRedis(): RedisClient {
     return redisClient;
   }
 
-  // Use Upstash if UPSTASH_REDIS_REST_URL is set (production on Vercel)
-  // Use IORedis if REDIS_URL is set (local development)
-  if (process.env.UPSTASH_REDIS_REST_URL) {
+  // Use Upstash REST API if credentials are available (production on Vercel)
+  // Fall back to IORedis for local development
+  const upstashCreds = getUpstashCredentials();
+  if (upstashCreds) {
     console.log("Using Upstash Redis client");
-    redisClient = createUpstashClient();
+    redisClient = createUpstashClient(upstashCreds.url, upstashCreds.token);
   } else {
     console.log("Using IORedis client for local development");
     redisClient = createIORedisClient();

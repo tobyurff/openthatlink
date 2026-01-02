@@ -106,8 +106,9 @@ All environment variables are optional and have sensible defaults.
 ### Redis Configuration
 
 **For Vercel (Production):**
-- `UPSTASH_REDIS_REST_URL` - Provided by Upstash integration
-- `UPSTASH_REDIS_REST_TOKEN` - Provided by Upstash integration
+The Upstash integration automatically provides credentials. We support both naming conventions:
+- `UPSTASH_REDIS_REST_URL` / `KV_REST_API_URL`
+- `UPSTASH_REDIS_REST_TOKEN` / `KV_REST_API_TOKEN`
 
 **For Local Development:**
 - `REDIS_URL` - Local Redis connection string (default: `redis://localhost:6379`)
