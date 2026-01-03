@@ -31,7 +31,10 @@ function formatLinkCount(count: number): string {
 }
 
 function jsonResponse(data: EnqueueResponse, status: number = 200) {
-  return NextResponse.json(data, { status });
+  return new NextResponse(JSON.stringify(data, null, 2), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 async function handleEnqueue(

@@ -10,7 +10,10 @@ import { cleanupOldItems, refreshExpiry, dequeueLinks } from "@/lib/redis";
 const config = getConfig();
 
 function jsonResponse(data: PollResponse, status: number = 200) {
-  return NextResponse.json(data, { status });
+  return new NextResponse(JSON.stringify(data, null, 2), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 export async function GET(
