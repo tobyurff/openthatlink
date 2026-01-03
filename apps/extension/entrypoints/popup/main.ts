@@ -34,6 +34,9 @@ let turboCountdown: HTMLElement;
 // Turbo mode countdown timer
 let turboCountdownInterval: ReturnType<typeof setInterval> | null = null;
 
+// Stats refresh interval
+let statsRefreshInterval: ReturnType<typeof setInterval> | null = null;
+
 // Stats elements
 let openCountEl: HTMLElement;
 let lastLinkSection: HTMLElement;
@@ -126,7 +129,7 @@ async function updateTurboModeUI(): Promise<void> {
     turboSection.classList.add("hidden");
     turboActiveSection.classList.remove("hidden");
     statusBar.classList.add("turbo-active");
-    statusText.textContent = "Turbo mode - polling every 10 seconds";
+    statusText.textContent = "Turbo Mode - checking for new links to open every 10 seconds";
 
     // Start countdown
     startTurboCountdown(turboEndTime);
@@ -135,7 +138,7 @@ async function updateTurboModeUI(): Promise<void> {
     turboSection.classList.remove("hidden");
     turboActiveSection.classList.add("hidden");
     statusBar.classList.remove("turbo-active");
-    statusText.textContent = "Polling every 60 seconds";
+    statusText.textContent = "Checking for new links to open every 60 seconds";
 
     // Stop countdown
     stopTurboCountdown();
@@ -284,6 +287,11 @@ async function init() {
 
   // Initialize stats display
   await updateStatsDisplay();
+
+  // Refresh stats every 2 seconds while popup is open
+  statsRefreshInterval = setInterval(async () => {
+    await updateStatsDisplay();
+  }, 2000);
 
   // Auto-enable turbo mode for first-time users (counter is 0)
   const stats = await getOpenStats();
