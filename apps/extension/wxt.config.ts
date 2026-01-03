@@ -11,8 +11,10 @@ export default defineConfig({
       "Open links in your browser from Zapier, n8n, Make, or any webhook-capable tool.",
     version: "1.0.0",
     permissions: ["storage", "tabs", "alarms"],
-    // Allow all HTTPS hosts for self-hosted instances
-    host_permissions: ["https://*/*"],
+    // Only require openthat.link by default
+    host_permissions: ["https://openthat.link/*"],
+    // Allow requesting permission for self-hosted servers dynamically
+    optional_host_permissions: ["https://*/*", "http://*/*"],
     icons: {
       16: "/icon/16.png",
       32: "/icon/32.png",
