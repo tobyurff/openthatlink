@@ -86,6 +86,23 @@ pnpm ext:dev          # Chrome
 pnpm ext:dev:firefox  # Firefox
 ```
 
+#### Running from the extension directory
+
+If you're working directly in `apps/extension/`:
+
+```bash
+cd apps/extension
+
+# Install dependencies (if not already done from root)
+npm install
+
+# Start dev mode
+npm run dev           # Chrome (default)
+npm run dev:firefox   # Firefox
+```
+
+WXT will automatically open a browser with your extension loaded and support hot module reloading.
+
 ### Build
 
 ```bash
