@@ -39,6 +39,12 @@ let openCountEl: HTMLElement;
 let lastLinkSection: HTMLElement;
 let lastLinkEl: HTMLAnchorElement;
 
+// Inline stats elements (below status bar)
+let statsInline: HTMLElement;
+let statsCountInline: HTMLElement;
+let lastLinkSectionInline: HTMLElement;
+let lastLinkInline: HTMLAnchorElement;
+
 // Footer elements
 let footerLink: HTMLAnchorElement;
 
@@ -56,12 +62,15 @@ function updateWebhookDisplay(secret: string, baseUrl: string) {
   webhookUrlInput.value = `${webhookUrl}?link=example.com`;
 
   // Update examples with actual webhook URL
-  exampleGet.textContent = `${webhookUrl}?link=yahoo.com,google.com`;
+  exampleGet.textContent = `${webhookUrl}
+    ?link=yahoo.com,google.com`;
 
   // URL-encoded example with Google News URLs (English and French)
   const googleNewsEN = encodeURIComponent("https://news.google.com/home?hl=en-US");
   const googleNewsFR = encodeURIComponent("https://news.google.com/home?hl=fr-FR");
-  exampleEncoded.textContent = `${webhookUrl}?links[]=${googleNewsEN}&links[]=${googleNewsFR}`;
+  exampleEncoded.textContent = `${webhookUrl}
+    ?links[]=${googleNewsEN}
+    &links[]=${googleNewsFR}`;
 
   exampleCurl.textContent = `curl -X POST ${webhookUrl} \\
   -H "Content-Type: application/json" \\
@@ -198,6 +207,37 @@ async function updateStatsDisplay(): Promise<void> {
   } else {
     lastLinkSection.style.display = "none";
   }
+
+  // When count > 0: show inline stats (below status bar), hide bottom stats section
+  // When count = 0: hide inline stats, show bottom stats section
+  const statsSection = document.getElementById("statsSection") as HTMLElement;
+
+  if (stats.count > 0) {
+    // Update inline stats content
+    if (stats.count <= 5) {
+      // Congratulatory message for first 5 tabs
+      const tabWord = stats.count === 1 ? "tab" : "tabs";
+      statsCountInline.innerHTML = `Woohoo! You've opened your first <span>${stats.count}</span> ${tabWord} through a webhook`;
+    } else {
+      statsCountInline.innerHTML = `<span>${stats.count}</span> links opened`;
+    }
+
+    // Update inline last link
+    if (stats.lastLink) {
+      lastLinkSectionInline.style.display = "block";
+      lastLinkInline.href = stats.lastLink;
+      lastLinkInline.textContent = truncateUrl(stats.lastLink);
+      lastLinkInline.title = stats.lastLink;
+    } else {
+      lastLinkSectionInline.style.display = "none";
+    }
+
+    statsInline.classList.remove("hidden");
+    statsSection.classList.add("hidden");
+  } else {
+    statsInline.classList.add("hidden");
+    statsSection.classList.remove("hidden");
+  }
 }
 
 async function init() {
@@ -232,15 +272,28 @@ async function init() {
   lastLinkSection = document.getElementById("lastLinkSection") as HTMLElement;
   lastLinkEl = document.getElementById("lastLink") as HTMLAnchorElement;
 
+  // Get inline stats DOM elements
+  statsInline = document.getElementById("statsInline") as HTMLElement;
+  statsCountInline = document.getElementById("statsCountInline") as HTMLElement;
+  lastLinkSectionInline = document.getElementById("lastLinkSectionInline") as HTMLElement;
+  lastLinkInline = document.getElementById("lastLinkInline") as HTMLAnchorElement;
+
   // Get footer elements and set link with secret
   footerLink = document.getElementById("footerLink") as HTMLAnchorElement;
   footerLink.href = `https://openthat.link#${secret}`;
 
-  // Initialize turbo mode UI
-  await updateTurboModeUI();
-
   // Initialize stats display
   await updateStatsDisplay();
+
+  // Auto-enable turbo mode for first-time users (counter is 0)
+  const stats = await getOpenStats();
+  const turboEndTime = await getTurboEndTime();
+  if (stats.count === 0 && !turboEndTime) {
+    await enableTurboMode();
+  }
+
+  // Initialize turbo mode UI
+  await updateTurboModeUI();
 
   // Copy button functionality
   copyBtn.addEventListener("click", async () => {

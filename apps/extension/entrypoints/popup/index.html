@@ -18,7 +18,7 @@
         line-height: 1.5;
         color: #1a1a1a;
         background: #fff;
-        min-width: 520px;
+        min-width: 560px;
         padding: 20px;
       }
 
@@ -425,6 +425,11 @@
       .stats-last-link a:hover {
         text-decoration: underline;
       }
+
+      /* Inline stats below status bar */
+      .stats-inline {
+        margin-top: 10px;
+      }
     </style>
   </head>
   <body>
@@ -448,6 +453,14 @@
       <div class="status" id="statusBar">
         <span class="status-dot" id="statusDot"></span>
         <span id="statusText">Polling every 60 seconds</span>
+      </div>
+      <div class="stats-section stats-inline hidden" id="statsInline">
+        <div class="stats-count" id="statsCountInline">
+          <span>0</span> links opened
+        </div>
+        <div class="stats-last-link" id="lastLinkSectionInline">
+          Last: <a href="#" id="lastLinkInline" target="_blank" title=""></a>
+        </div>
       </div>
     </div>
 
