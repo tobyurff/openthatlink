@@ -1,5 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "cd ../.. && pnpm install",
-  "buildCommand": "cd ../.. && pnpm --filter web build"
+  "buildCommand": "cd ../.. && pnpm --filter web build",
+  "rewrites": [
+    {
+      "source": "/privacy",
+      "destination": "/how-we-dont-use-your-data"
+    }
+  ]
 }
