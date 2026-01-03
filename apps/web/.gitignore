@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# Generated assets (copied from packages/assets during build)
+public/favicon.ico
+public/apple-touch-icon.png
+public/logo.svg
+public/og-image.png
