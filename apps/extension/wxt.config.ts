@@ -23,10 +23,10 @@ export default defineConfig({
     },
     action: {
       default_icon: {
-        16: "/icon/16.png",
-        32: "/icon/32.png",
-        48: "/icon/48.png",
-        128: "/icon/128.png",
+        16: "/icon-toolbar/16.png",
+        32: "/icon-toolbar/32.png",
+        48: "/icon-toolbar/48.png",
+        128: "/icon-toolbar/128.png",
       },
       default_title: "OpenThat.Link",
     },
