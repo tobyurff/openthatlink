@@ -9,8 +9,8 @@ export default defineConfig({
     name: "OpenThat.Link",
     description:
       "Open links in your browser from Zapier, n8n, Make, or any webhook-capable tool.",
-    version: "1.0.0",
-    permissions: ["storage", "tabs", "alarms"],
+    version: "1.0.1",
+    permissions: ["storage", "alarms"],
     // Only require openthat.link by default
     host_permissions: ["https://openthat.link/*"],
     // Allow requesting permission for self-hosted servers dynamically
