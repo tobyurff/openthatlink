@@ -54,6 +54,28 @@ npm run dev           # Start Next.js dev server
 npm run build         # Build for production
 ```
 
+## Building Extension for Store Submission
+
+### Google Chrome Web Store
+```bash
+cd apps/extension
+wxt zip
+# Output: dist/otlextension-1.0.0-chrome.zip
+```
+
+### Firefox Add-ons
+```bash
+cd apps/extension
+wxt zip -b firefox
+# Output: dist/otlextension-1.0.0-firefox.zip
+```
+
+### All browsers at once
+```bash
+cd apps/extension
+wxt zip && wxt zip -b firefox
+```
+
 ## Key Technologies
 
 - **Web App**: Next.js 14, Upstash Redis
