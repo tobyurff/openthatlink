@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "copy-assets": "bash scripts/copy-assets.sh",
-    "dev": "npm run copy-assets && next dev",
+    "dev": "npm run copy-assets && next dev -p 3045",
     "build": "npm run copy-assets && next build",
     "start": "next start",
     "lint": "next lint"

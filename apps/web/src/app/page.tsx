@@ -12,6 +12,8 @@ const RECOGNIZABLE_TOKEN = DEFAULT_CONFIG.RECOGNIZABLE_TOKEN;
 // Use env vars with fallback to defaults for white-labeling support
 const PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? DEFAULT_CONFIG.PUBLIC_BASE_URL;
 const GITHUB_URL = process.env.NEXT_PUBLIC_GITHUB_URL ?? DEFAULT_CONFIG.GITHUB_URL;
+const YOUTUBE_DEMO_URL = "https://www.youtube.com/watch?v=E4nvnxUSTXU";
+const YOUTUBE_EMBED_URL = "https://www.youtube-nocookie.com/embed/E4nvnxUSTXU?rel=0&modestbranding=1&playlist=E4nvnxUSTXU";
 
 function isValidSecret(secret: string): boolean {
   if (secret.length !== SECRET_TOTAL_LEN) return false;
@@ -24,6 +26,7 @@ function isValidSecret(secret: string): boolean {
 
 export default function Home() {
   const [secret, setSecret] = useState<string | null>(null);
+  const [videoAutoplay, setVideoAutoplay] = useState(false);
 
   useEffect(() => {
     const hash = window.location.hash.slice(1);
@@ -69,6 +72,19 @@ export default function Home() {
               </p>
               <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center" }}>
                 <BrowserDropdown />
+                <button
+                  onClick={() => {
+                    setVideoAutoplay(true);
+                    document.getElementById("video-demo")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="btn btn-primary"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M6 3v10l7-5-7-5z" />
+                  </svg>
+                  Watch in Action
+                </button>
                 <a
                   href={GITHUB_URL}
                   target="_blank"
@@ -150,6 +166,52 @@ export default function Home() {
                 your browser.
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Video Demo */}
+      <section
+        id="video-demo"
+        className="section"
+        style={{ borderTop: "1px solid var(--gray-200)" }}
+      >
+        <div className="container">
+          <h2 style={{ fontSize: 32, marginBottom: 16 }}>See it in action</h2>
+          <p
+            style={{
+              color: "var(--gray-600)",
+              marginBottom: 32,
+              maxWidth: 600,
+            }}
+          >
+            Watch a quick demo to see how OpenThat.Link connects your automation tools to your browser.
+          </p>
+          <div
+            style={{
+              position: "relative",
+              paddingBottom: "56.25%",
+              height: 0,
+              overflow: "hidden",
+              maxWidth: 800,
+              borderRadius: 12,
+              boxShadow: "0 4px 24px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <iframe
+              src={videoAutoplay ? `${YOUTUBE_EMBED_URL}&autoplay=1` : YOUTUBE_EMBED_URL}
+              title="OpenThat.Link Demo"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                border: 0,
+              }}
+            />
           </div>
         </div>
       </section>
