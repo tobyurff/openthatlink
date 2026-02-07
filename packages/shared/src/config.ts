@@ -12,7 +12,7 @@ export const DEFAULT_CONFIG = {
 
   // External links (for white-labeling)
   CHROME_EXTENSION_URL: "https://chromewebstore.google.com/detail/enfmlabiopdgghghdlkckfeobnfeafio",
-  FIREFOX_EXTENSION_URL: "https://addons.mozilla.org/firefox/addon/openthatlink/",
+  FIREFOX_EXTENSION_URL: "https://addons.mozilla.org/en-US/firefox/addon/openthat-link/",
   GITHUB_URL: "https://github.com/tobyurff/openthatlink",
 
   // Company info (for footer)

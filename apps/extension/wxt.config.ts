@@ -4,8 +4,8 @@ export default defineConfig({
   // Use manifest version 3
   manifestVersion: 3,
 
-  // Extension metadata
-  manifest: {
+  // Extension metadata - using function to conditionally add Firefox-specific settings
+  manifest: (env) => ({
     name: "OpenThat.Link",
     description:
       "Open links in your browser from Zapier, n8n, Make, or any webhook-capable tool.",
@@ -30,7 +30,19 @@ export default defineConfig({
       },
       default_title: "OpenThat.Link",
     },
-  },
+    // Firefox-specific settings (required for MV3)
+    ...(env.browser === "firefox" && {
+      browser_specific_settings: {
+        gecko: {
+          id: "extension@openthat.link",
+          strict_min_version: "109.0",
+          data_collection_permissions: {
+            required: ["none"],
+          },
+        },
+      },
+    }),
+  }),
 
   // Output directory
   outDir: "dist",
